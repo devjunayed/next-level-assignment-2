@@ -1,47 +1,41 @@
+
 import { TProduct } from './product.interface';
 import ProductModel from './product.model';
 
-// create a product into database
+// Create a new product
 const createProductDB = async (payload: TProduct) => {
-  const result = await ProductModel.create(payload);
-  return result;
+  return await ProductModel.create(payload);
 };
 
-// get all product from the database
+// Get all products, optionally filtered by a search term
 const getAllProductDB = async (searchTerm: string | undefined) => {
-  let result: TProduct[] = [];
-
-  if (searchTerm?.length === 0 || searchTerm === undefined) {
-    result = await ProductModel.find({});
+  if (!searchTerm) {
+    return await ProductModel.find({});
   } else {
-    result = await ProductModel.find({
+    return await ProductModel.find({
       $text: { $search: searchTerm, $caseSensitive: false },
     });
   }
-
-  return result;
 };
 
-// get a single product from the database
+// Get a single product by ID
 const getProductDB = async (productId: string) => {
-  const result = await ProductModel.findOne({ _id: productId });
-  return result;
+  return await ProductModel.findOne({ _id: productId });
 };
 
+// Update a product by ID
 const updateProductDB = async (productId: string, data: TProduct) => {
-  const result = await ProductModel.updateOne(
-    { _id: productId },
-    { $set: data },
-  );
+  await ProductModel.updateOne({ _id: productId }, { $set: data });
   return data;
 };
 
+// Delete a product by ID
 const deleteProductDB = async (productId: string) => {
   await ProductModel.deleteOne({ _id: productId });
   return null;
 };
 
-// exporting all services
+// Exporting product services
 export const ProductService = {
   createProductDB,
   getAllProductDB,

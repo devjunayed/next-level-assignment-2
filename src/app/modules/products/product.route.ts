@@ -1,22 +1,22 @@
-import express from 'express'
-import { ProductController } from './product.controller'
+import express from 'express';
+import { ProductController } from './product.controller';
 
-const router = express.Router()
+const router = express.Router();
 
-// post route -> end point will be /api/products
-router.post('/', ProductController.createProduct)
+// Create a new product
+router.post('/', ProductController.createProduct);
 
-// get route -> end point will be /api/products
+// Fetch all products
 router.get('/', ProductController.getAllProduct);
 
-// get route -> end point will be /api/products/:productId
-router.get("/:productId", ProductController.getProduct);
+// Fetch a single product by ID
+router.get('/:productId', ProductController.getProduct);
 
-// get route -> end point will be /api/products/:productId
-router.put("/:productId", ProductController.updateProduct);
-// get route -> end point will be /api/products/:productId
-router.delete("/:productId", ProductController.deleteProduct);
+// Update a product by ID
+router.put('/:productId', ProductController.updateProduct);
 
+// Delete a product by ID
+router.delete('/:productId', ProductController.deleteProduct);
 
-// exporting router for products
-export const ProductRoutes = router
+// Exporting product routes
+export const ProductRoutes = router;
