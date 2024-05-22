@@ -6,8 +6,14 @@ const createOrderDB = async (data: TOrder) => {
     return result;
 }
 
+const getOrderDB = async() => {
+    const result = await OrderModel.find().select('-_id');
+    return result;
+}
+
 const OrderService = {
-    createOrderDB
+    createOrderDB,
+    getOrderDB
 }
 
 export default OrderService;
