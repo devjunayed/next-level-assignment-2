@@ -28,13 +28,29 @@ const createProduct = async (req: Request, res: Response) => {
 // get all products
 const getAllProduct = async (req: Request, res: Response) => {
   try {
-    const result = await ProductService.getAllProductDB()
+    const searchTerm = req.query.searchTerm
 
-    res.status(200).json({
-      success: true,
-      message: 'Product fetched successfully!',
-      data: result,
-    })
+    const result = await ProductService.getAllProductDB(
+      searchTerm as string | undefined,
+    )
+    
+
+    if (searchTerm?.length === 0 || searchTerm === undefined) {
+      res.status(200).json({
+        success: true,
+        message: `Product fetched successfully!`,
+        data: result,
+      })
+    } else {
+      res.status(200).json({
+        success: true,
+        message: `Products matching search term '${searchTerm}' fetched successfully!`,
+        data: result,
+      })
+    }
+  
+
+    
   } catch (err) {
     res.status(500).json({
       success: false,
@@ -48,10 +64,10 @@ const getAllProduct = async (req: Request, res: Response) => {
 const getProduct = async (req: Request, res: Response) => {
   try {
     // getting id from the params
-    const productId = req.params.productId;
+    const productId = req.params.productId
 
     // getting porducts from the service
-    const result = await ProductService.getProductDB(productId);
+    const result = await ProductService.getProductDB(productId)
 
     // sending response
     res.status(200).json({
@@ -69,19 +85,20 @@ const getProduct = async (req: Request, res: Response) => {
   }
 }
 
-
 // update single product using id
 const updateProduct = async (req: Request, res: Response) => {
   try {
     // getting id from the params
-    const productId = req.params.productId;
-    const updatedProduct = req.body;
+    const productId = req.params.productId
+    const updatedProduct = req.body
 
-    const zodParsedData = ZProductSchema.parse(updatedProduct);
-
+    const zodParsedData = ZProductSchema.parse(updatedProduct)
 
     // updating porducts in  the service
-    const result = await ProductService.updateProductDB(productId, zodParsedData);
+    const result = await ProductService.updateProductDB(
+      productId,
+      zodParsedData,
+    )
 
     // sending response
     res.status(200).json({
@@ -102,10 +119,10 @@ const updateProduct = async (req: Request, res: Response) => {
 const deleteProduct = async (req: Request, res: Response) => {
   try {
     // getting id from the params
-    const productId = req.params.productId;
+    const productId = req.params.productId
 
     // updating porducts in  the service
-    const result = await ProductService.deleteProductDB(productId);
+    const result = await ProductService.deleteProductDB(productId)
 
     // sending response
     res.status(200).json({
@@ -123,11 +140,10 @@ const deleteProduct = async (req: Request, res: Response) => {
   }
 }
 
-
 export const ProductController = {
   createProduct,
   getAllProduct,
   getProduct,
   updateProduct,
-  deleteProduct
+  deleteProduct,
 }
