@@ -9,11 +9,18 @@ const createOrder = async (req: Request, res: Response) => {
     const zodParsedData = ZOrderSchema.parse(data);
     const result = await OrderService.createOrderDB(zodParsedData);
 
-    res.status(200).json({
-      success: true,
-      message: 'Order created successfully!',
-      data,
-    });
+    if (result.insufficient) {
+      res.status(500).json({
+        success: false,
+        message: 'Insufficient quantity available in inventory',
+      });
+    } else {
+      res.status(200).json({
+        success: true,
+        message: 'Order created successfully!',
+        data,
+      });
+    }
   } catch (err) {
     res.status(500).json({
       success: false,
@@ -22,21 +29,23 @@ const createOrder = async (req: Request, res: Response) => {
   }
 };
 
-
 const getOrder = async (req: Request, res: Response) => {
   try {
-  
-    const result = await OrderService.getOrderDB();
+    const email = req.query.email;
+
+    const result = await OrderService.getOrderDB(email as string | undefined);
 
     res.status(200).json({
       success: true,
-      message: 'Orders fetched successfully!',
+      message: email
+        ? 'Orders fetched successfully for user email!'
+        : 'Orders fetched successfully!',
       data: result,
     });
   } catch (err) {
     res.status(500).json({
       success: false,
-      message: 'Could not created order!',
+      message: 'Could not get order!',
     });
   }
 };
