@@ -1,4 +1,3 @@
-
 import { TProduct } from './product.interface';
 import ProductModel from './product.model';
 

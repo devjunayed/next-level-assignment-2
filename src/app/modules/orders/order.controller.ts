@@ -14,7 +14,7 @@ const createOrder = async (req: Request, res: Response) => {
     const result = await OrderService.createOrderDB(zodParsedData);
 
     // Check if there was insufficient inventory for the order
-    if (result.insufficient) {
+    if (result === null) {
       res.status(500).json({
         success: false,
         message: 'Insufficient quantity available in inventory',

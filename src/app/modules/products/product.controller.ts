@@ -35,14 +35,16 @@ const getAllProduct = async (req: Request, res: Response) => {
     const searchTerm = req.query.searchTerm;
 
     // Retrieve all products, optionally filtering by the search term
-    const result = await ProductService.getAllProductDB(searchTerm as string | undefined);
+    const result = await ProductService.getAllProductDB(
+      searchTerm as string | undefined,
+    );
 
     // Send a success response with the retrieved products
     res.status(200).json({
       success: true,
-      message: searchTerm ? 
-        `Products matching search term '${searchTerm}' fetched successfully!` :
-        'Products fetched successfully!',
+      message: searchTerm
+        ? `Products matching search term '${searchTerm}' fetched successfully!`
+        : 'Products fetched successfully!',
       data: result,
     });
   } catch (err) {
@@ -91,7 +93,10 @@ const updateProduct = async (req: Request, res: Response) => {
     const zodParsedData = ZProductSchema.parse(updatedProduct);
 
     // Update the product in the database
-    const result = await ProductService.updateProductDB(productId, zodParsedData);
+    const result = await ProductService.updateProductDB(
+      productId,
+      zodParsedData,
+    );
 
     // Send a success response with the updated product data
     res.status(200).json({
