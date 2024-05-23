@@ -3,24 +3,27 @@ import { TOrder } from './order.interface';
 import OrderModel from './order.model';
 
 const createOrderDB = async (data: TOrder) => {
+  // Find the product by ID
   const product = await ProductModel.findOne({ _id: data.productId });
 
   let result: any = {};
 
+  // Check if the product exists and has sufficient inventory
   if (
     product &&
-    product?.inventory?.quantity !== undefined &&
-    product?.inventory?.quantity >= data.quantity
+    product.inventory?.quantity !== undefined &&
+    product.inventory.quantity >= data.quantity
   ) {
-    const prodcutUpdateResult = await ProductModel.updateOne(
+    // Decrease the product inventory by the ordered quantity
+    const productUpdateResult = await ProductModel.updateOne(
       { _id: data.productId },
       { $inc: { 'inventory.quantity': -data.quantity } },
     );
 
-    const productAfterDeduction = await ProductModel.findOne({
-      _id: data.productId,
-    });
+    // Re-fetch the product to check the updated inventory status
+    const productAfterDeduction = await ProductModel.findOne({ _id: data.productId });
 
+    // If the inventory quantity reaches zero, update the inStock status
     if (productAfterDeduction?.inventory?.quantity === 0) {
       const productStockUpdateResult = await ProductModel.updateOne(
         { _id: data.productId },
@@ -28,21 +31,24 @@ const createOrderDB = async (data: TOrder) => {
       );
     }
 
+    // Create the order
     result = await OrderModel.create(data);
-
-  }else{
-    result  = {insufficient: true};
+  } else {
+    // Indicate insufficient inventory
+    result = { insufficient: true };
   }
+  
   return result;
 };
 
 const getOrderDB = async (email: string | undefined) => {
+  // Fetch orders based on the email query parameter
   if (!email) {
+    // If no email is provided, fetch all orders
     return await OrderModel.find({});
   } else {
-    return await OrderModel.find({
-      email,
-    });
+    // Fetch orders for the specific email
+    return await OrderModel.find({ email });
   }
 };
 
